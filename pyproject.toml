@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-ambit"
+version = "0.1.0"
+description = "Scoped, multi-dimensional authorization for Django — permissions across the dimensions your organisation actually has."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mohamed" }]
+keywords = ["django", "authorization", "rbac", "permissions", "scopes", "access-control", "multi-tenant"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Security",
+]
+dependencies = ["Django>=4.2"]
+
+[project.optional-dependencies]
+dev = ["build", "twine"]
+
+[project.urls]
+# Fill these in once the repo is public:
+# Homepage = "https://github.com/<you>/ambit"
+# Source = "https://github.com/<you>/ambit"
+# Issues = "https://github.com/<you>/ambit/issues"
+
+[tool.setuptools.packages.find]
+include = ["ambit*"]
