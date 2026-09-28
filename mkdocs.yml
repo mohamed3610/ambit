@@ -1,0 +1,53 @@
+site_name: ambit
+site_description: Scoped, multi-dimensional authorization for Django — permissions across the dimensions your organisation actually has.
+site_author: Mohamed
+# Update once the repo is public:
+# repo_url: https://github.com/<you>/ambit
+# repo_name: ambit
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Concepts: concepts.md
+  - How-to guides:
+      - Add a new dimension: how-to/add-a-dimension.md
+      - Protect class-based views: how-to/protect-views.md
+      - Check access in code & templates: how-to/checks-in-code-and-templates.md
+      - Grant and revoke access: how-to/grant-and-revoke-access.md
+      - Show roles as positions: how-to/show-positions.md
+      - Build a permission console: how-to/build-a-permission-console.md
+      - Advanced bindings (the Q form): how-to/advanced-bindings.md
+      - Test your authorization: how-to/test-your-authorization.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
