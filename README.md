@@ -1,5 +1,11 @@
 # ambit
 
+[![PyPI](https://img.shields.io/pypi/v/django-ambit.svg)](https://pypi.org/project/django-ambit/)
+[![Django versions](https://img.shields.io/pypi/frameworkversions/django/django-ambit.svg)](https://pypi.org/project/django-ambit/)
+[![License](https://img.shields.io/pypi/l/django-ambit.svg)](https://github.com/mohamed3610/ambit/blob/main/LICENSE)
+[![Docs](https://img.shields.io/readthedocs/django-ambit.svg)](https://django-ambit.readthedocs.io/)
+[![Django Packages](https://img.shields.io/badge/Django_Packages-ambit-0C4B33)](https://djangopackages.org/packages/p/ambit/)
+
 **Scoped, multi-dimensional authorization for Django.**
 
 Most authorization answers one question: *what* may this user do? `ambit`
