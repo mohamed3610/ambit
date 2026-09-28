@@ -2,7 +2,7 @@ site_name: ambit
 site_description: Scoped, multi-dimensional authorization for Django — permissions across the dimensions your organisation actually has.
 site_author: Mohamed
 # Update once the repo is public:
-# repo_url: https://github.com/<you>/ambit
+repo_url: https://github.com/mohamed3610/ambit
 # repo_name: ambit
 
 theme:
