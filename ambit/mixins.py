@@ -4,32 +4,32 @@ layer in accounts/authorization/services/.
 
 Usage:
 
-    class GradeListView(ScopedQuerysetMixin, ListView):
-        model = Grade
-        permission = "grade.view_grade"
-        authorization_policy = GRADE_SCOPE_POLICY
+    class WidgetListView(ScopedQuerysetMixin, ListView):
+        model = Widget
+        permission = "widgets.view_widget"
+        authorization_policy = WIDGET_SCOPE_POLICY
 
-    class GradeDetailView(ScopedObjectMixin, DetailView):
-        model = Grade
-        permission = "grade.view_grade"
-        authorization_policy = GRADE_SCOPE_POLICY
+    class WidgetDetailView(ScopedObjectMixin, DetailView):
+        model = Widget
+        permission = "widgets.view_widget"
+        authorization_policy = WIDGET_SCOPE_POLICY
 
-    class GradeCreateView(ScopedCreateMixin, CreateView):
-        model = Grade
-        fields = ["name", "stage", "order"]
-        permission = "grade.add_grade"
-        authorization_policy = GRADE_SCOPE_POLICY
+    class WidgetCreateView(ScopedCreateMixin, CreateView):
+        model = Widget
+        fields = ["name", "team"]
+        permission = "widgets.add_widget"
+        authorization_policy = WIDGET_SCOPE_POLICY
 
-    class GradeUpdateView(ScopedUpdateMixin, UpdateView):
-        model = Grade
-        fields = ["name", "stage", "order"]
-        permission = "grade.change_grade"
-        authorization_policy = GRADE_SCOPE_POLICY
+    class WidgetUpdateView(ScopedUpdateMixin, UpdateView):
+        model = Widget
+        fields = ["name", "team"]
+        permission = "widgets.change_widget"
+        authorization_policy = WIDGET_SCOPE_POLICY
 
-    class GradeDeleteView(ScopedObjectMixin, DeleteView):
-        model = Grade
-        permission = "grade.delete_grade"
-        authorization_policy = GRADE_SCOPE_POLICY
+    class WidgetDeleteView(ScopedObjectMixin, DeleteView):
+        model = Widget
+        permission = "widgets.delete_widget"
+        authorization_policy = WIDGET_SCOPE_POLICY
 
 `permission` and `authorization_policy` are deliberately plain class
 attributes. If either needs to vary per request, override
@@ -80,15 +80,15 @@ class ScopedPermissionMixin:
         """
         Extra values a scope check needs beyond form.cleaned_data --
         for a field the scope's policy reaches through (e.g.
-        "classroom__grade__stage") that isn't itself a form field
+        "member__team__region") that isn't itself a form field
         because it's fixed by the URL instead of chosen by the user
-        (see ClassroomCreateView setting `classroom` from a URL kwarg,
+        (see a CreateView setting `team` from a URL kwarg,
         not a submitted value). Without this, can_create() has nothing
         to resolve that lookup's root from on a brand-new object,
         since there's no existing instance to fall back to the way
         can_update() falls back to self.object.
 
-        Override and return e.g. {"classroom": self.classroom}.
+        Override and return e.g. {"team": self.team}.
         Merged *underneath* cleaned_data, so a real form field always
         wins if the two ever overlap.
         """

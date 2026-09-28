@@ -8,7 +8,7 @@ permissions. Without this, "may change a role's name" is one edit away
 from "may do everything", and "may give access" is one self-grant away
 from the same.
 
-Platform superusers are outside the rule -- they bootstrap the school.
+Platform superusers are outside the rule -- they bootstrap the system.
 """
 
 from django.contrib.auth.models import Permission

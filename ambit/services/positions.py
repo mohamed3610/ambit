@@ -1,7 +1,7 @@
 """
 Leadership, read back from the grants.
 
-"Who is the class teacher of 2A?" is not a field on the section. It is
+"Who leads Team North?" is not a field on the team. It is
 whoever holds a *position* role (Role.is_position) in a scope limited
 to that section. This module answers that for one object or a page of
 them, in a fixed number of queries.

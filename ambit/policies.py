@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Callable
 
-from .dimensions import ScopeDimension
-
 
 @dataclass(frozen=True)
 class ScopeBinding:
@@ -11,12 +9,12 @@ class ScopeBinding:
     How one scope dimension reaches one model.
 
     The plain form is a lookup path: `queryset_lookup` filters rows
-    (grade__stage__pk__in=targets) and `value_lookup` (defaulting to the
+    (team__region__pk__in=targets) and `value_lookup` (defaulting to the
     same path) is walked as attributes off submitted form values when a
     row is being created or changed.
 
     The Q form is for what a path can't say -- a condition on the joined
-    row itself ("taught by X *as the active primary teacher*"), or an OR
+    row itself ("assigned to X *as the active lead*"), or an OR
     of two routes. `q(target_ids)` returns the Q to filter with; `check`
     answers the create/change question for it, given the submitted
     values, the existing object (or None) and the resolved targets. A Q
@@ -43,17 +41,15 @@ class ScopePolicy:
         normalized = {}
 
         for dimension, binding in (bindings or {}).items():
-            normalized[ScopeDimension(dimension)] = binding
+            # Dimension keys are plain strings; a policy may be defined at
+            # import time, before dimensions are registered, so we do not
+            # validate against the registry here -- only normalise the key.
+            normalized[str(dimension)] = binding
 
         self._bindings = MappingProxyType(normalized)
 
     def get_binding(self, dimension):
-        try:
-            dimension = ScopeDimension(dimension)
-        except ValueError:
-            return None
-
-        return self._bindings.get(dimension)
+        return self._bindings.get(str(dimension))
 
     def supports(self, dimension):
         return self.get_binding(dimension) is not None

@@ -1,18 +1,16 @@
 from collections import defaultdict
 
-from django.apps import apps
-
-from ..dimensions import ScopeDimension, is_self_resolved
+from ..dimensions import is_self_resolved, resolve_self
 
 
-class _Own:
-    """Placeholder target of an Own-teaching constraint until a user resolves it."""
+class _Self:
+    """Placeholder target of a self-resolving constraint until a user resolves it."""
 
     def __repr__(self):
-        return "<own teaching>"
+        return "<self>"
 
 
-OWN_TEACHING = _Own()
+SELF_TARGET = _Self()
 
 
 def get_scope_constraints(scope):
@@ -21,14 +19,14 @@ def get_scope_constraints(scope):
 
     Example:
     {
-        "department": [<Department: Maths>],
-        "stage": [<Stage: Primary>],
-        "own": [OWN_TEACHING],
+        "department": [<Department: Sales>],
+        "region": [<Region: North>],
+        "own": [SELF_TARGET],
     }
 
-    Returns None for a global scope. An Own-teaching constraint has no
-    row to point at; its bucket holds the OWN_TEACHING marker, which
-    resolve_targets() swaps for the user's Teacher record.
+    Returns None for a global scope. A self-resolving constraint has no
+    row to point at; its bucket holds the SELF_TARGET marker, which
+    resolve_targets() swaps for the user's own target.
     """
 
     if not scope.is_active:
@@ -49,7 +47,7 @@ def get_scope_constraints(scope):
         bucket = grouped[constraint.dimension]
 
         if is_self_resolved(constraint.dimension):
-            bucket.append(OWN_TEACHING)
+            bucket.append(SELF_TARGET)
             continue
 
         target = constraint.target
@@ -59,24 +57,16 @@ def get_scope_constraints(scope):
     return dict(grouped)
 
 
-def own_teacher(user):
-    """
-    The Teacher record behind this login, or None. One query per
-    request, memoized on the user object like the grant set is.
-    """
-    if user is None or not user.is_authenticated:
-        return None
-    if not hasattr(user, "_own_teacher"):
-        Teacher = apps.get_model("teacher", "Teacher")
-        user._own_teacher = Teacher.objects.filter(user=user, is_active=True).first()
-    return user._own_teacher
-
-
 def resolve_targets(dimension, targets, user):
-    """The rows a constraint bucket stands for, for this user. Empty = fail closed."""
-    if dimension == ScopeDimension.OWN:
-        teacher = own_teacher(user)
-        return [teacher] if teacher is not None else []
+    """The rows a constraint bucket stands for, for this user. Empty = fail closed.
+
+    A self-resolving dimension ignores the stored bucket and resolves to the
+    user's own target via the dimension's `resolves_to`; a user with no own
+    target reaches nothing through it.
+    """
+    if is_self_resolved(dimension):
+        target = resolve_self(dimension, user)
+        return [target] if target is not None else []
     return targets
 
 

@@ -30,15 +30,14 @@ class Role(UUIDModel, TimeStampedModel):
 
     is_active = models.BooleanField(default=True)
 
-    # A position is a role worth naming on the pages it applies to:
-    # "Class Teacher" on a section, "Department Head" on a department.
-    # Leadership is not a field on Classroom or Department -- it is a
-    # grant, read back where it matters. A school decides which of its
-    # roles are titles.
+    # A position is a role worth naming on the pages it applies to
+    # ("Region Lead" on a region, "Team Lead" on a team). Leadership is
+    # not a field on the target model -- it is a grant, read back where it
+    # matters. An application decides which of its roles are titles.
     is_position = models.BooleanField(
         default=False,
-        help_text="Show holders of this role as a position on the pages it applies to "
-                  "(“Class Teacher · Omar Adel” on Grade 2 · A).",
+        help_text="Show holders of this role as a position on the pages its "
+                  "scope applies to.",
     )
 
     def __str__(self):
@@ -105,7 +104,7 @@ class ScopeConstraint(UUIDModel, TimeStampedModel):
         choices=scope_dimension_choices,
     )
 
-    # Both empty for a self-resolving dimension (Own teaching): the
+    # Both empty for a self-resolving dimension: the
     # target is whoever is signed in, not a row.
     content_type = models.ForeignKey(
         ContentType,
@@ -114,7 +113,11 @@ class ScopeConstraint(UUIDModel, TimeStampedModel):
         blank=True,
     )
 
-    object_id = models.UUIDField(
+    # A CharField, not a UUIDField: a target row may have any primary-key
+    # type (UUID, int, ...). Django's GenericForeignKey stores the pk as
+    # text and casts on lookup, so this reaches any model.
+    object_id = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )

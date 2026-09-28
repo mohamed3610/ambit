@@ -1,5 +1,5 @@
-from ..dimensions import ScopeDimension
-from .scopes import get_scope_constraints, own_teacher, resolve_targets, scope_queryset
+from ..dimensions import is_self_resolved, resolve_self
+from .scopes import get_scope_constraints, resolve_targets, scope_queryset
 
 
 _MISSING = object()
@@ -119,7 +119,7 @@ def clear_authorization_cache(user):
 
 def has_global_scope(user, permission):
     """
-    Does a grant of `permission` reach the whole school? A superuser
+    Does a grant of `permission` reach everything? A superuser
     does, the same way `authorized_queryset` and `has_authorized_scope`
     already answer for one -- callers must never read the grant set
     directly to decide this, or the superuser falls through the floor.
@@ -169,8 +169,8 @@ def authorized_queryset(
         )
 
     # ...applied to the caller's queryset as a semi-join. The scope Qs
-    # walk multi-valued relations (a teacher's assignments, a lesson's
-    # covers), so filtering the caller's rows through those joins
+    # walk multi-valued relations (a user's many assignments, a row's
+    # many links), so filtering the caller's rows through those joins
     # directly would multiply them -- DISTINCT hides that from a list
     # but not from a Count() the caller adds afterwards, and it costs a
     # hash over every column (ciphertext included). `pk IN (subquery)`
@@ -330,15 +330,15 @@ def _resolve_value(
 
     Supports nested lookups such as:
 
-        grade__stage
-        classroom__grade__stage
+        team__region
+        member__team__region
     """
 
     parts = lookup.split("__")
     root = parts[0]
 
     # A "pk" binding means the scope targets *this model's own rows*
-    # (Stage scoped by stage, Classroom scoped by classroom). The value
+    # (a Team scoped by team, a Region scoped by region). The value
     # to compare against the scope's targets is then the object itself,
     # not its pk -- targets are model instances, and a UUID is never
     # `in` a list of those. On create there is no object yet, so this
@@ -442,9 +442,9 @@ def _has_authorized_scope_uncached(
                 valid = False
                 break
 
-            # An Own-teaching grant reaches nothing for a login with no
-            # Teacher record, so the page or link should not exist for it.
-            if dimension == ScopeDimension.OWN and own_teacher(user) is None:
+            # A self-resolving grant reaches nothing for a user it resolves
+            # to None for, so the page or link should not exist for them.
+            if is_self_resolved(dimension) and resolve_self(dimension, user) is None:
                 valid = False
                 break
 
